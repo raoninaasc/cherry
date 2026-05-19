@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherry</title>
+
+  <style>
+   body {
+  margin: 0;
+  height: 100vh;
+  background: #050505;
+  color: #d8d8d8;
+  font-family: "Courier New", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gif-bg {
+  position: fixed;
+  inset: 0;
+  background-image: url("cereja.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.35;
+  z-index: 0;
+  filter: grayscale(10%) contrast(140%) brightness(70%) blur(1px);
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, transparent 45%, rgba(0,0,0,0.65) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.terminal {
+  position: relative;
+overflow: hidden;
+  width: 85%;
+  max-width: 700px;
+  padding: 30px;
+  background: rgba(35, 0, 8, 0.92);
+  border: 1px solid rgba(255, 80, 110, 0.22);
+  animation: brilhoTerminal 3s ease-in-out infinite;
+  border-radius: 8px;
+  box-shadow: 0 0 45px rgba(160, 0, 35, 0.28);
+  transform: rotate(-2deg);
+  z-index: 2;
+  overflow: hidden;
+  backdrop-filter: brightness(40%);
+}
+
+    .title {
+      font-weight: bold;
+      margin-bottom: 45px;
+      font-size: 22px;
+      opacity: 0.9;
+    }
+
+    #text {
+      white-space: pre-line;
+      font-size: 22px;
+      line-height: 1.5;
+      opacity: 0.85;
+      min-height: 200px;
+    }
+.linha {
+  display: block;
+  opacity: 0.35;
+  transition: 0.25s;
+}
+
+.linha.ativa {
+  opacity: 1;
+  color: #ffffff;
+  font-weight: bold;
+  text-shadow:
+    0 0 4px #ffffff,
+    0 0 9px #ffffff,
+    0 0 16px #ffffff,
+    0 0 60px #ffffff;
+};
+
+    button {
+      position: fixed;
+      bottom: 40px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 30px;
+      background: #d8d8d8;
+      color: #050505;
+      font-family: "Courier New", monospace;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 6px;
+      width: 0%;
+      background: #1d4ed8;
+      z-index: 4;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(189, 19, 19, 0.726) 1px, transparent 1px);
+      background-size: 3px 3px;
+      opacity: 0.15;
+      z-index: 5;
+    }
+
+    .flash-text {
+  font-size: 52px !important;
+  text-align: center;
+  letter-spacing: 2px;
+  animation: piscar 0.18s alternate 10;
+}
+
+    @keyframes brilhoTerminal {
+  0%, 100% {
+    box-shadow: 0 0 35px rgba(160, 0, 35, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 55px rgba(255, 40, 80, 0.32);
+  }
+}
+
+.player {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  max-width: 720px;
+  background: rgba(12, 12, 12, 0.92);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  padding: 14px 18px;
+  z-index: 10;
+  box-shadow: 0 0 35px rgba(0,0,0,0.6);
+  backdrop-filter: brightness(40%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.play-btn {
+  position: static;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  padding: 0;
+  background: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+#tempoAtual,
+#tempoFinal {
+  font-size: 12px;
+  opacity: 0.75;
+  min-width: 38px;
+}
+
+#barraTempo {
+  flex: 1;
+  accent-color: #ff2d55;
+  cursor: pointer;
+}
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 180, 190, 0.10),
+    rgba(255, 180, 190, 0.10) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+
+ .cherry-stamp {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 22px;
+  height: auto;
+  opacity: 0.9;
+  z-index: 999;
+  pointer-events: none;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 6px rgba(255, 80, 110, 0.45));
+}
+
+</style>
+  </style>
+</head>
+
+<body>
+  <div class="gif-bg"></div>
+  <div class="vignette"></div>
+  <div class="terminal">
+    <div class="title">Cherry<br>Lana Del Rey</div>
+
+    <div id="text"></div>
+  </div>
+
+  <div class="player">
+ <button class="play-btn" onclick="iniciar()">▶</button>
+  <span id="tempoAtual">0:00</span>
+  <input type="range" id="barraTempo" min="0" max="63" value="0" step="0.1">
+  <span id="tempoFinal">1:03</span>
+</div>
+  <audio id="musica" src="musica.mp3"></audio>
+
+  <div class="progress" id="progress"></div>
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+
+  
+  <script>
+    const inicioDaMusica = 87;
+    const duracaoDoTrecho = 63;
+
+    const offsetLegenda = 0;
+
+    const volumeMaximo = 1;
+    const duracaoFadeIn = 4;
+    const duracaoFadeOut = 6;
+
+    const acoes = [
+      { tempo: 1.0 + offsetLegenda, tipo: "add", texto: "Sim (porra)" },
+      { tempo: 4.5 + offsetLegenda, tipo: "add", texto: "Querido, querido, querido" },
+      { tempo: 8.5 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços quando estou com você" },
+      { tempo: 14.5 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços" },
+      { tempo: 19.6 + offsetLegenda, tipo: "add", texto: "As minhas cerejas e vinho, alecrim e tomilho" },
+      { tempo: 26.4 + offsetLegenda, tipo: "add", texto: "E todos os meus pêssegos estão arruinados" },
+
+      { tempo: 28.0 + offsetLegenda, tipo: "clear" },
+      { tempo: 28.5 + offsetLegenda, tipo: "flash" },
+      { tempo: 28.9 + offsetLegenda, tipo: "clear" },
+
+    
+      { tempo: 29.9 + offsetLegenda, texto: "estão arruinadas" },
+{ tempo: 31.0 + offsetLegenda, tipo: "clear" },
+
+      { tempo: 31.9 + offsetLegenda, tipo: "add", texto: "Meus sonhos sobre Roseiras" },
+      { tempo: 35.0 + offsetLegenda, tipo: "add", texto: "Foram incendiados por demônios" },
+      { tempo: 37.0 + offsetLegenda, tipo: "add", texto: "E todas as minhas praias sombrias" },
+      { tempo: 40.7 + offsetLegenda, tipo: "add", texto: "Estão arruinadas." },
+      { tempo: 42.9 + offsetLegenda, tipo: "add", texto: "Meus filmes analógicos foram completamente destruídos" },
+      { tempo: 48.9 + offsetLegenda, tipo: "add", texto: "E eu caio aos pedaços..." },
+      { tempo: 55.9 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços quando estou com você" },
+      { tempo: 61.0 + offsetLegenda, tipo: "add", texto: "(Por quê?)" }
+    ];
+
+    const musica = document.getElementById("musica");
+    const barraTempo = document.getElementById("barraTempo");
+const tempoAtual = document.getElementById("tempoAtual");
+const tempoFinal = document.getElementById("tempoFinal");
+    const textoNaTela = document.getElementById("text");
+    const progress = document.getElementById("progress");
+
+const playBtn = document.querySelector(".play-btn");
+    let timers = [];
+
+   function limparTimers() {
+  timers.forEach(timer => clearTimeout(timer));
+  timers = [];
+}
+
+function atualizarLegenda(tempoAtualMusica) {
+  textoNaTela.classList.remove("flash-text");
+
+  const acoesAteAgora = acoes.filter(acao => acao.tempo <= tempoAtualMusica);
+
+  let linhas = [];
+
+  acoesAteAgora.forEach(acao => {
+    if (acao.tipo === "clear") {
+      linhas = [];
+    }
+
+    if (acao.tipo === "add") {
+      linhas.push(acao.texto);
+    }
+
+    if (acao.tipo === "flash") {
+      linhas = [acao.texto];
+      textoNaTela.classList.add("flash-text");
+    }
+  });
+
+  textoNaTela.innerHTML = "";
+
+  linhas.forEach((linhaTexto, index) => {
+    const linha = document.createElement("div");
+    linha.classList.add("linha");
+
+    if (index === linhas.length - 1) {
+      linha.classList.add("ativa");
+    }
+
+    linha.textContent = linhaTexto;
+    textoNaTela.appendChild(linha);
+  });
+}
+
+function fadeIn() {
+      musica.volume = 0;
+
+      const intervalo = 100;
+      const passos = duracaoFadeIn * 1000 / intervalo;
+      const aumento = volumeMaximo / passos;
+
+      const efeito = setInterval(() => {
+        if (musica.volume < volumeMaximo) {
+          musica.volume = Math.min(volumeMaximo, musica.volume + aumento);
+        } else {
+          clearInterval(efeito);
+        }
+      }, intervalo);
+    }
+
+    function fadeIn() {
+      musica.volume = 0;
+
+      const intervalo = 100;
+      const passos = duracaoFadeIn * 1000 / intervalo;
+      const aumento = volumeMaximo / passos;
+
+      const efeito = setInterval(() => {
+        if (musica.volume < volumeMaximo) {
+          musica.volume = Math.min(volumeMaximo, musica.volume + aumento);
+        } else {
+          clearInterval(efeito);
+        }
+      }, intervalo);
+    }
+
+    function fadeOut() {
+      const intervalo = 100;
+      const passos = duracaoFadeOut * 1000 / intervalo;
+      const reducao = musica.volume / passos;
+
+      const efeito = setInterval(() => {
+        if (musica.volume > 0) {
+          musica.volume = Math.max(0, musica.volume - reducao);
+        } else {
+          clearInterval(efeito);
+          musica.pause();
+        }
+      }, intervalo);
+    }
+
+    function iniciar() {
+      limparTimers();
+
+      textoNaTela.textContent = "";
+      textoNaTela.classList.remove("flash-text");
+
+      progress.style.transition = "none";
+      progress.style.width = "0%";
+
+      musica.currentTime = inicioDaMusica;
+      musica.volume = 0;
+      musica.play();
+
+      fadeIn();
+
+      document.querySelector("button").style.display = "none";
+
+      acoes.forEach((acao) => {
+  const timer = setTimeout(() => {
+
+    if (acao.tipo === "add") {
+  atualizarLegenda(acao.tempo);
+}
+
+    if (acao.tipo === "clear") {
+      textoNaTela.classList.remove("flash-text");
+      textoNaTela.textContent = "";
+    }
+
+    if (acao.tipo === "flash") {
+      textoNaTela.textContent = acao.texto;
+      textoNaTela.classList.add("flash-text");
+
+      const removerFlash = setTimeout(() => {
+        textoNaTela.classList.remove("flash-text");
+      }, 1400);
+
+           timers.push(removerFlash);
+    }
+
+  }, acao.tempo * 1000);
+
+  timers.push(timer);
+});
+
+      setTimeout(() => {
+        progress.style.transition = `width ${duracaoDoTrecho}s linear`;
+        progress.style.width = "100%";
+      }, 100);
+
+      const fadeOutTimer = setTimeout(() => {
+        fadeOut();
+      }, (duracaoDoTrecho - duracaoFadeOut) * 1000);
+
+      timers.push(fadeOutTimer);
+    }function formatarTempo(segundos) {
+  const min = Math.floor(segundos / 60);
+  const sec = Math.floor(segundos % 60).toString().padStart(2, "0");
+  return `${min}:${sec}`;
+}
+
+barraTempo.addEventListener("input", () => {
+  musica.currentTime = inicioDaMusica + Number(barraTempo.value);
+});
+
+setInterval(() => {
+  const tempoTrecho = musica.currentTime - inicioDaMusica;
+
+  barraTempo.value = Math.max(0, Math.min(duracaoDoTrecho, tempoTrecho));
+  tempoAtual.textContent = formatarTempo(Math.max(0, tempoTrecho));
+  tempoFinal.textContent = formatarTempo(duracaoDoTrecho);
+
+  if (!musica.paused) {
+    playBtn.textContent = "❚❚";
+  } else {
+    playBtn.textContent = "▶";
+  }
+}, 100);
+  </script>
+</body>
+</html>
