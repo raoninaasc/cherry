@@ -68,6 +68,26 @@ overflow: hidden;
       line-height: 1.5;
       opacity: 0.85;
       min-height: 200px;
+
+      #flash {
+  position: absolute;
+  left: 30px;
+  top: 150px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  text-shadow:
+    0 0 4px #ffffff,
+    0 0 10px #ffffff,
+    0 0 22px rgba(255,255,255,0.8);
+}
+
+#flash.piscando {
+  opacity: 1;
+  animation: piscar 0.18s alternate 6;
+}
     }
 .linha {
   display: block;
@@ -218,6 +238,7 @@ overflow: hidden;
     <div class="title">Cherry<br>Lana Del Rey</div>
 
     <div id="text"></div>
+<div id="flash"></div>
   </div>
 
   <div class="player">
@@ -251,22 +272,29 @@ overflow: hidden;
       { tempo: 19.6 + offsetLegenda, tipo: "add", texto: "As minhas cerejas e vinho, alecrim e tomilho" },
       { tempo: 26.4 + offsetLegenda, tipo: "add", texto: "E todos os meus pêssegos estão arruinados" },
 
-      { tempo: 28.0 + offsetLegenda, tipo: "clear" },
-      { tempo: 28.5 + offsetLegenda, tipo: "flash" },
-      { tempo: 28.9 + offsetLegenda, tipo: "clear" },
+{ tempo: 29.7 + offsetLegenda, tipo: "clear" },
 
-    
-      { tempo: 29.9 + offsetLegenda, texto: "estão arruinadas" },
+{ tempo: 29.8 + offsetLegenda, tipo: "add", texto: "estão arruinadas" },
+
 { tempo: 31.0 + offsetLegenda, tipo: "clear" },
 
-      { tempo: 31.9 + offsetLegenda, tipo: "add", texto: "Meus sonhos sobre Roseiras" },
-      { tempo: 35.0 + offsetLegenda, tipo: "add", texto: "Foram incendiados por demônios" },
-      { tempo: 37.0 + offsetLegenda, tipo: "add", texto: "E todas as minhas praias sombrias" },
-      { tempo: 40.7 + offsetLegenda, tipo: "add", texto: "Estão arruinadas." },
-      { tempo: 42.9 + offsetLegenda, tipo: "add", texto: "Meus filmes analógicos foram completamente destruídos" },
-      { tempo: 48.9 + offsetLegenda, tipo: "add", texto: "E eu caio aos pedaços..." },
-      { tempo: 55.9 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços quando estou com você" },
-      { tempo: 61.0 + offsetLegenda, tipo: "add", texto: "(Por quê?)" }
+{ tempo: 31.9 + offsetLegenda, tipo: "add", texto: "Meus sonhos sobre Roseiras" },
+{ tempo: 35.0 + offsetLegenda, tipo: "add", texto: "Foram incendiados por demônios" },
+
+{ tempo: 37.0 + offsetLegenda, tipo: "clear" },
+{ tempo: 37.1 + offsetLegenda, tipo: "add", texto: "E todas as minhas praias sombrias" },
+{ tempo: 40.7 + offsetLegenda, tipo: "add", texto: "Estão arruinadas." },
+{ tempo: 42.9 + offsetLegenda, tipo: "add", texto: "Meus filmes analógicos foram" },
+{ tempo: 45.8 + offsetLegenda, tipo: "add", texto: "completamente destruídos" },
+
+{ tempo: 48.8 + offsetLegenda, tipo: "clear" },
+{ tempo: 48.9 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços..." },
+
+{ tempo: 55.9 + offsetLegenda, tipo: "add", texto: "Eu caio aos pedaços" },
+{ tempo: 58.6 + offsetLegenda, tipo: "add", texto: "quando estou com você" },
+
+{ tempo: 60.9 + offsetLegenda, tipo: "clear" },
+{ tempo: 61.0 + offsetLegenda, tipo: "add", texto: "(Por quê?)" }
     ];
 
     const musica = document.getElementById("musica");
@@ -293,8 +321,9 @@ function atualizarLegenda(tempoAtualMusica) {
 
   acoesAteAgora.forEach(acao => {
     if (acao.tipo === "clear") {
-      linhas = [];
-    }
+  textoNaTela.classList.remove("flash-text");
+  textoNaTela.innerHTML = "";
+}
 
     if (acao.tipo === "add") {
       linhas.push(acao.texto);
@@ -385,27 +414,27 @@ function fadeIn() {
 
       document.querySelector("button").style.display = "none";
 
-      acoes.forEach((acao) => {
+      acoes.forEach(acao => {
   const timer = setTimeout(() => {
 
-    if (acao.tipo === "add") {
-  atualizarLegenda(acao.tempo);
-}
-
     if (acao.tipo === "clear") {
+      textoNaTela.innerHTML = "";
       textoNaTela.classList.remove("flash-text");
-      textoNaTela.textContent = "";
+      return;
     }
 
-    if (acao.tipo === "flash") {
-      textoNaTela.textContent = acao.texto;
-      textoNaTela.classList.add("flash-text");
+    if (acao.tipo === "add") {
+      textoNaTela.classList.remove("flash-text");
 
-      const removerFlash = setTimeout(() => {
-        textoNaTela.classList.remove("flash-text");
-      }, 1400);
+      const linhasAntigas = textoNaTela.querySelectorAll(".linha");
+      linhasAntigas.forEach(linha => linha.classList.remove("ativa"));
 
-           timers.push(removerFlash);
+      const novaLinha = document.createElement("div");
+      novaLinha.classList.add("linha", "ativa");
+      novaLinha.textContent = acao.texto;
+
+      textoNaTela.appendChild(novaLinha);
+      return;
     }
 
   }, acao.tempo * 1000);
